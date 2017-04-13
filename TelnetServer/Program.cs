@@ -1,9 +1,12 @@
 ﻿using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Protocol;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
+using TelnetServer.Log;
+using TelnetServer.Models;
 
 namespace TelnetServer
 {
@@ -44,19 +47,40 @@ namespace TelnetServer
                 return;
             }
 
-            Console.WriteLine("启动服务成功!");
+            Console.WriteLine("启动服务成功,如需帮助请输入help!");
 
 
             while (true)
             {
                 var str = Console.ReadLine();
-                if (str.ToLower().Equals("exit"))
+                if (str.ToLower().Equals("stop"))
                 {
-                    break;
+                    appServer.Stop();
+                    Console.WriteLine(appServer.State.ToString());
                 }
+                if (str.ToLower().Equals("start"))
+                {
+
+                    appServer.Start();
+                    Console.WriteLine(appServer.State.ToString());
+                }
+                if (str.ToLower().Equals("state"))
+                {
+
+                    Console.WriteLine(appServer.State.ToString());
+                }
+
                 if (str.ToLower().Equals("count"))
                 {
                     Console.WriteLine(appServer.SessionCount);
+                }
+                if (str.ToLower().Equals("close"))
+                {
+                    SessionAllClosed(appServer);
+                }
+                if (str.ToLower().Equals("help"))
+                {
+                    Console.WriteLine("stop,start,state,count,close");
                 }
             }
 
@@ -69,9 +93,18 @@ namespace TelnetServer
         }
         static void NewSessionConnected(AppSession session)
         {
-
+            //控制台输出
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "    User on-line IP:" + session.RemoteEndPoint.Address.ToString());
+            //日志记录
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID" + session.SessionID);
+            //写入数据库
+            Ip ip = new Ip();
+            ip.Action = "online";
+            ip.IP = session.RemoteEndPoint.Address.ToString();
+            ip.SessionId = session.SessionID;
+            RecordIP.recordip(ip);
+
+
             //设置会话的字符格式
             session.Charset = Encoding.GetEncoding("gbk");
             //向对应客户端发送数据  
@@ -100,7 +133,15 @@ namespace TelnetServer
              * requestInfo.Body: "127.0.0.1 -n 5" 
              * requestInfo.Parameters: ["127.0.0.1","-n","5"] 
              **/
+            //记录日志
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + "  Check in this word:" + requestInfo.Key.ToString());
+            //写入数据库
+            Ip ip = new Ip();
+            ip.Action = "input  " + requestInfo.Key.ToString();
+            ip.IP = session.RemoteEndPoint.Address.ToString();
+            ip.SessionId = session.SessionID;
+            RecordIP.recordip(ip);
+
             switch (requestInfo.Key.ToUpper())
             {
 
@@ -119,8 +160,27 @@ namespace TelnetServer
 
         static void SessionClosed(AppSession session, CloseReason reason)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "     User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!");
-            LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!");
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "     User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!" + reason);
+            LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!" + reason);
+            Ip ip = new Ip();
+            ip.Action = "leave  " + reason;
+            ip.IP = session.RemoteEndPoint.Address.ToString();
+            ip.SessionId = session.SessionID;
+            RecordIP.recordip(ip);
+
         }
+
+        static void SessionAllClosed(AppServer appserver)
+        {
+            var appsession = appserver.GetAllSessions();
+            foreach (AppSession item in appsession)
+            {
+                item.Close();
+            }
+
+        }
+
+
+
     }
 }
