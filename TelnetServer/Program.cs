@@ -84,12 +84,6 @@ namespace TelnetServer
                 }
             }
 
-            Console.WriteLine();
-
-            //停止服务  
-            appServer.Stop();
-
-            Console.WriteLine("服务已停止，按任意键退出!");
         }
         static void NewSessionConnected(AppSession session)
         {
@@ -133,6 +127,7 @@ namespace TelnetServer
              * requestInfo.Body: "127.0.0.1 -n 5" 
              * requestInfo.Parameters: ["127.0.0.1","-n","5"] 
              **/
+            //requestInfo.Parameters
             //记录日志
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + "  Check in this word:" + requestInfo.Key.ToString());
             //写入数据库
