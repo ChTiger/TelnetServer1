@@ -17,7 +17,6 @@ namespace TelnetServer.Log
                 bool res = TelnetDbContext.Database.CreateIfNotExists();
                 TelnetDbContext.Ip.Add(ip);
                 TelnetDbContext.SaveChanges();
-
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Protocol;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
@@ -13,6 +12,8 @@ namespace TelnetServer
 
     public class Program
     {
+
+
         public static string Textpath = ConfigurationManager.AppSettings["Textpath"];
         public static int IntervalTime = int.Parse(ConfigurationManager.AppSettings["IntervalTime"]);
         static void Main(string[] args)
@@ -21,6 +22,8 @@ namespace TelnetServer
             var appServer = new AppServer();
             //服务器端口  
             int port = 23;
+
+
             //设置服务监听端口  
             if (!appServer.Setup(port))
             {
@@ -88,7 +91,7 @@ namespace TelnetServer
         static void NewSessionConnected(AppSession session)
         {
             //控制台输出
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "    User on-line IP:" + session.RemoteEndPoint.Address.ToString());
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "    User on-line IP:" + session.RemoteEndPoint.Address.ToString());
             //日志记录
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID" + session.SessionID);
             //写入数据库
@@ -106,7 +109,7 @@ namespace TelnetServer
             Thread.Sleep(1500);
             session.Send("Today is " + DateTime.Now.ToString("yyyy-MM-dd") + "!");
             Thread.Sleep(1500);
-            session.Send("Every day is the only day in your life,please love it!");
+            session.Send("Everyday is the only day in your life,please love it!");
             session.Send("");
             Thread.Sleep(1500);
             //讲故事开始了
@@ -115,6 +118,9 @@ namespace TelnetServer
             session.Send("");
             session.Send("The article is over,Could you tell me your name now?(用拼音)");
 
+
+
+            session.LocalEndPoint.Address.ToString();
         }
 
         static void NewRequestReceived(AppSession session, StringRequestInfo requestInfo)
@@ -128,14 +134,20 @@ namespace TelnetServer
              * requestInfo.Parameters: ["127.0.0.1","-n","5"] 
              **/
             //requestInfo.Parameters
+
+
+
+
             //记录日志
-            LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + "  Check in this word:" + requestInfo.Key.ToString());
+            LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + "  key in:" + requestInfo.Key.ToString());
+
             //写入数据库
             Ip ip = new Ip();
             ip.Action = "input  " + requestInfo.Key.ToString();
             ip.IP = session.RemoteEndPoint.Address.ToString();
             ip.SessionId = session.SessionID;
             RecordIP.recordip(ip);
+
 
             switch (requestInfo.Key.ToUpper())
             {
@@ -155,7 +167,7 @@ namespace TelnetServer
 
         static void SessionClosed(AppSession session, CloseReason reason)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + "     User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!" + reason);
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "     User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!" + reason);
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + " leave!!!!!" + reason);
             Ip ip = new Ip();
             ip.Action = "leave  " + reason;

@@ -9,16 +9,16 @@ namespace TelnetServer
         private const string SError = "Error";
         private const string SDebug = "Debug";
         private const string DefaultName = "Business";
-
+       
         static LogHelper()
         {
-#if DEBUG
-            var path = "E:\\project\\TelnetServer\\TelnetServer\\log4net.config";
-#endif
-#if !DEBUG
-                                    string path = AppDomain.CurrentDomain.BaseDirectory + @"\log4net.config";
-#endif
-            // string path = "D:\\project\\log4net.config";
+            //#if DEBUG
+            //            var path = "E:\\project\\TelnetServer\\TelnetServer\\log4net.config";
+            //#endif
+            //#if !DEBUG
+            //                                    string path = AppDomain.CurrentDomain.BaseDirectory + @"\log4net.config";
+            //#endif
+            string path = "D:\\project\\log4net.config";
             log4net.Config.XmlConfigurator.Configure(new FileInfo(path));
         }
 
