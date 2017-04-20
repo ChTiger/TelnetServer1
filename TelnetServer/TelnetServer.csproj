@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Log\LogHelper.cs" />
     <Compile Include="Log\RecordIP.cs" />
+    <Compile Include="Log\test.cs" />
     <Compile Include="Models\Ip.cs" />
     <Compile Include="Models\TelnetDbContext.cs" />
     <Compile Include="Program.cs" />

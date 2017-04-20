@@ -16,6 +16,7 @@ namespace TelnetServer
 
         public static string Textpath = ConfigurationManager.AppSettings["Textpath"];
         public static int IntervalTime = int.Parse(ConfigurationManager.AppSettings["IntervalTime"]);
+        public static string Textname = ConfigurationManager.AppSettings["Textname"];
         static void Main(string[] args)
         {
 
@@ -117,10 +118,6 @@ namespace TelnetServer
 
             session.Send("");
             session.Send("The article is over,Could you tell me your name now?(用拼音)");
-
-
-
-            session.LocalEndPoint.Address.ToString();
         }
 
         static void NewRequestReceived(AppSession session, StringRequestInfo requestInfo)
@@ -134,9 +131,6 @@ namespace TelnetServer
              * requestInfo.Parameters: ["127.0.0.1","-n","5"] 
              **/
             //requestInfo.Parameters
-
-
-
 
             //记录日志
             LogHelper.Info("User IP:" + session.RemoteEndPoint.Address.ToString() + "   sessionID:" + session.SessionID + "  key in:" + requestInfo.Key.ToString());
@@ -152,14 +146,29 @@ namespace TelnetServer
             switch (requestInfo.Key.ToUpper())
             {
 
-                case ("LEILIN"):
-                    session.Send("I Love You!");
-                    session.Send("Please call me, my phone number is 18801088!");
-                    session.Send("Don't make me wait too long time！");
+                case ("SUNLILI"):
+                    session.Send("这个站点专门为你做的，不要惊讶，请你认真看完下面的几幅画！");
+                    session.Send("");
+                    ReadFile.Surprise(session, Textpath, Textname);
+                    session.Send("谢谢你能看完！");
+
+
+
+                    LogHelper.Info("****************************************************************");
+
+                    ip.Action = "look";
+                    ip.IP = session.RemoteEndPoint.Address.ToString();
+                    ip.SessionId = session.SessionID;
+                    RecordIP.recordip(ip);
+
+                    session.Close();
+
                     break;
 
                 default:
                     session.Send("Thank you!");
+                    session.Send("祝您幸福");
+                    ReadFile.ReadFormText(session, Textpath + "123\\", 0);
                     session.Close();
                     break;
             }
