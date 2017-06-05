@@ -23,7 +23,8 @@ namespace TelnetServer
             var appServer = new AppServer();
             //服务器端口  
             int port = 23;
-
+            Encoding a = appServer.TextEncoding;
+            Console.WriteLine(a);
 
             //设置服务监听端口  
             if (!appServer.Setup(port))
@@ -146,13 +147,12 @@ namespace TelnetServer
             switch (requestInfo.Key.ToUpper())
             {
 
-                case ("SUNLILI"):
+                case ("ZHANGSHENGNAN"):
                     session.Send("这个站点专门为你做的，不要惊讶，请你认真看完下面的几幅画！");
                     session.Send("");
+                    Thread.Sleep(2000);
                     ReadFile.Surprise(session, Textpath, Textname);
                     session.Send("谢谢你能看完！");
-
-
 
                     LogHelper.Info("****************************************************************");
 
@@ -167,7 +167,7 @@ namespace TelnetServer
 
                 default:
                     session.Send("Thank you!");
-                    session.Send("祝您幸福");
+                    session.Send("祝您幸福!");
                     ReadFile.ReadFormText(session, Textpath + "123\\", 0);
                     session.Close();
                     break;
